@@ -1,49 +1,32 @@
-const color = {
-  node: "color",
-  hash: "@color",
-
-}
-
-const apple = {
-  node: "apple",
-  hash: "@apple",
-  edge: {
-    subset:[],
-    superset: ["@fruits"],
-    color: ["@red", "@green"],
-  }
+var color = {
+    node: "color",
+    hash: 1116
 };
-
-const fruit = {
-  node: "fruit",
-  hash: "@fruits",
-  color: "not defined",
-  edge: {
-    subset: ["@apple"],
-    superset:[],
-  }
+var apple = {
+    node: "apple",
+    hash: 1063,
+    edge: {
+        subset: [],
+        superset: [1127,],
+        color: ["@red", "@green"]
+    }
 };
-
-const hashTable = {
-
-}
-
-
-
+var fruit = {
+    node: "fruit",
+    hash: 1127,
+    edge: {
+        subset: [1063],
+        superset: [],
+        color: []
+    }
+};
+var hashTable = {
+    1063: apple,
+    1127: fruit
+};
 function isSubset(subset, superset) {
-  return superset.edge.subset.filter(obj=>obj == subset.hash ) ?
-    `${subset.node} is ${superset.node}` :
-    `${subset.node} is not ${superset.node}`
+    return superset.edge.subset.filter(function (obj) { return obj == subset.hash; }) ?
+        "".concat(subset.node, " is ").concat(superset.node) :
+        "".concat(subset.node, " is not ").concat(superset.node);
 }
-
 console.log(isSubset(apple, fruit));
-
-function strHashing (str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash += str.charCodeAt(i) * i;
-  }
-  return hash;
-}
-
-console.log(strHashing("apple"));
