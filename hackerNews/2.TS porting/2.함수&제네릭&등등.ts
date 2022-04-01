@@ -1,36 +1,51 @@
-
 // type alias
-type NewsFeed = {
-  id: number,
-  title: string,
-  comments_count: number,
-  user: string,
-  points: number,
-  time_ago: string,
-  read: boolean
-}
 type Store = {
   newsFeed: NewsFeed[],
   currentPage: number,
   lastPage: number,
   pageSize: number
 }
+type News = {
+  readonly id: number,
+  readonly title: string,
+  readonly content: string,
+  readonly user: string,
+  readonly url: string,
+  readonly time_ago: string,
+}
+type NewsFeed = News & {
+  readonly comments_count: number,
+  readonly points: number,
+  read?: boolean
+}
+type NewsContent = News & {
+  readonly comments: []
+}
+type NewsComment = News & {
+  readonly comments: [],
+  readonly level: number
+}
+//---------------------------------------------------
+
+
 const root : HTMLElement | null = document.getElementById("root")
 const ajax : XMLHttpRequest = new XMLHttpRequest
 const newsUrl : string = `https://api.hnpwa.com/v0/news/1.json`
 const contentUrl : string = `https://api.hnpwa.com/v0/item/@id.json`
-
 const store : Store = { currentPage: 1, pageSize: 5, newsFeed: [], lastPage: 1 }
 //---------------------------------------------------
 
 
-const getData = (url :string) => {
+// 제네릭을 사용하여 NewsFeed[] 와 NewsContent를 사용할 수 있게 하자
+// 이 두 타입은 모두 리스폰스이므로 제네릭명을 다음과 같이 준다.
+const getData = <AjaxRespons>(url :string):AjaxRespons => {
   ajax.open("GET", url, false)
   ajax.send()
   return JSON.parse(ajax.response)
 }
 
-const initReadState = (feeds) => {
+// 인풋과 아웃풋이 모두 feeds로 같은 타입
+const initReadState = (feeds:NewsFeed[]):NewsFeed[] => {
   let i = 0
   for (i = 0; i < feeds.length; i++) {
     feeds[i].read = false
@@ -38,7 +53,8 @@ const initReadState = (feeds) => {
   return feeds
 }
 
-const updateView = (html:string) => {
+// 리턴값이 없을땐 void
+const updateView = (html:string):void => {
   if (root) {
     root.innerHTML = html
   } else {
@@ -46,11 +62,12 @@ const updateView = (html:string) => {
   }
 }
 
-const newsFeed = () => {
+const newsFeed = ():void => {
   let news :NewsFeed[] = store.newsFeed
 
   if (news.length == 0) {
-    news = store.newsFeed = initReadState(getData(newsUrl))
+                                    // 함수 제네릭 출력타입을 설정
+    news = store.newsFeed = initReadState(getData<NewsFeed[]>(newsUrl))
     store.lastPage = Math.ceil(news.length / store.pageSize)
   }
 
@@ -104,21 +121,21 @@ const newsFeed = () => {
   }
 
   template = template.replace('@news', newsList.join(''))
-  template = template.replace('@prev', store.currentPage > 1 ? store.currentPage - 1 : 1)
-  template = template.replace('@next', store.currentPage < store.lastPage ? store.currentPage + 1 : store.lastPage)
+  template = template.replace('@prev', String(store.currentPage > 1 ? store.currentPage - 1 : 1))
+  template = template.replace('@next', String(store.currentPage < store.lastPage ? store.currentPage + 1 : store.lastPage))
   
   updateView(template)
 }
 
-const newsContent = () => {
+const newsContent = ():void => {
   const id = location.hash.slice(7)
   store.newsFeed.map(news => {
     if (news.id == Number(id)) {
       news.read = true
     }
   })
-
-  const { title, content, comments } = getData(contentUrl.replace("@id", id))
+                                      // 제네릭 타입지정
+  const { title, content, comments } = getData<NewsContent>(contentUrl.replace("@id", id))
   let template = `
     <div class="bg-gray-600 min-h-screen pb-8">
       <div class="bg-white text-xl">
@@ -145,42 +162,45 @@ const newsContent = () => {
       </div>
     </div>
   `
-
-  const makeComment = (comments) => {
-    const commentStr = []
-
-    for (let i = 0; i < comments.length; i++) {
-      const { user, content, time_ago, level } = comments[i]
-      commentStr.push(`
-        <div style="padding-left: ${level * 20}px;" class="mt-4">
-          <div class="text-gray-400">
-            <i class="fa fa-sort-up mr-2"></i>
-            <strong>${user}</strong> ${time_ago}
-          </div>
-          <p class="text-gray-700">${content}</p>
-        </div>
-      `)
-
-      if (comments[i].comments) {
-        // 재귀함수를 통해 대댓글을 만들어준다.
-        commentStr.push(makeComment(comments[i].comments))
-      }
-    }
-
-    return commentStr.join('')
-  }
+  makeComment(comments)
 
   updateView(template.replace('@comments', makeComment(comments)))
 }
 
-const router = () => {
+
+
+// 함수 밖으로 빼고 타입 써주고
+const makeComment = (comments:NewsComment[]):string => {
+  const commentStr = []
+  for (let i = 0; i < comments.length; i++) {
+    const { user, content, time_ago, level } = comments[i]
+    commentStr.push(`
+      <div style="padding-left: ${level * 20}px;" class="mt-4">
+        <div class="text-gray-400">
+          <i class="fa fa-sort-up mr-2"></i>
+          <strong>${user}</strong> ${time_ago}
+        </div>
+        <p class="text-gray-700">${content}</p>
+      </div>
+    `)
+    if (comments[i].comments) {
+      commentStr.push(makeComment(comments[i].comments))
+    }
+  }
+  return commentStr.join('')
+}
+
+
+
+const router = ():void => {
   const routePath = location.hash
   if (routePath == '' || routePath == '#') {
     newsFeed()
-  } else if (routePath.startsWith('#/page/')) {
+    // 잘되는데 .startsWith() 문자열입력은 안받는다는 오류가 떠서 교체
+  } else if (routePath.indexOf('#/page/')>=0) {
     store.currentPage = Number(routePath.slice(7))
     newsFeed()
-  } else if (routePath.startsWith('#/show/')) {
+  } else if (routePath.indexOf('#/show/')>=0) {
     newsContent()
   }
 }

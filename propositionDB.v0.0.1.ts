@@ -54,7 +54,6 @@ type HashTable = {
   [hash: Concept['hash']]: Concept,
 }
 
-
 const hashTable:HashTable = {
   619: tree,
   633: food,
@@ -68,7 +67,6 @@ const conceptTable = {
   "apple": apple,
   "fruit": fruit,
 }
-
 
 const hashPath = {
   subset: [

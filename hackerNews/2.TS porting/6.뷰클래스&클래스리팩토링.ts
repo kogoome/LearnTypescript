@@ -68,10 +68,10 @@ applyApiMixins(NewsFeedApi, [Api])
 applyApiMixins(NewsContentApi, [Api])
 //---------------------------------------------------
 abstract class View {
-  private template:string
-  private renderTemplate:string
-  private container:HTMLElement
-  private htmlList:string[]
+  template:string
+  renderTemplate:string
+  container:HTMLElement
+  htmlList:string[]
   constructor(containerId:string, template:string) {
     const containerElement = document.getElementById(containerId)
     if (!containerElement) { throw new Error("container element not found") }
@@ -80,25 +80,25 @@ abstract class View {
     this.renderTemplate = template
     this.htmlList = []
   }
-  protected updateView ():void { 
+  updateView ():void { 
     this.container.innerHTML = this.renderTemplate 
     this.renderTemplate = this.template
   }
-  protected addHtml(html:string):void { this.htmlList.push(html) }
-  protected getHtml():string { 
+  addHtml(html:string):void { this.htmlList.push(html) }
+  getHtml():string { 
     const snapshot = this.htmlList.join('')
     this.clearHtmlList()
     return snapshot
   }
-  protected setTemplateData(key:string, value:string) {
+  setTemplateData(key:string, value:string) {
     this.renderTemplate = this.renderTemplate.replace(`@${key}`, value)
   }
-  private clearHtmlList():void { this.htmlList = [] }
+  clearHtmlList():void { this.htmlList = [] }
   abstract render():void
 }
 class NewsFeedView extends View {
-  private api:NewsFeedApi
-  private feeds:NewsFeed[]
+  api:NewsFeedApi
+  feeds:NewsFeed[]
   constructor(containerId:string) {
     let template = `
     <div class="bg-gray-600 min-h-screen">
@@ -216,7 +216,7 @@ class NewsContentView extends View  {
     this.updateView()
   }
 
-  private makeComment(comments:NewsComment[]):string {
+  makeComment(comments:NewsComment[]):string {
     for (let i = 0; i < comments.length; i++) {
       const { user, content, time_ago, level } = comments[i]
       this.addHtml(`
