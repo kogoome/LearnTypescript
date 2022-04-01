@@ -68,10 +68,10 @@ applyApiMixins(NewsFeedApi, [Api])
 applyApiMixins(NewsContentApi, [Api])
 //---------------------------------------------------
 abstract class View {
-  template:string
-  renderTemplate:string
-  container:HTMLElement
-  htmlList:string[]
+  private template:string
+  private renderTemplate:string
+  private container:HTMLElement
+  private htmlList:string[]
   constructor(containerId:string, template:string) {
     const containerElement = document.getElementById(containerId)
     if (!containerElement) { throw new Error("container element not found") }
@@ -80,25 +80,25 @@ abstract class View {
     this.renderTemplate = template
     this.htmlList = []
   }
-  updateView ():void { 
+  protected updateView ():void { 
     this.container.innerHTML = this.renderTemplate 
     this.renderTemplate = this.template
   }
-  addHtml(html:string):void { this.htmlList.push(html) }
-  getHtml():string { 
+  protected addHtml(html:string):void { this.htmlList.push(html) }
+  protected getHtml():string { 
     const snapshot = this.htmlList.join('')
     this.clearHtmlList()
     return snapshot
   }
-  setTemplateData(key:string, value:string) {
+  protected setTemplateData(key:string, value:string) {
     this.renderTemplate = this.renderTemplate.replace(`@${key}`, value)
   }
-  clearHtmlList():void { this.htmlList = [] }
+  private clearHtmlList():void { this.htmlList = [] }
   abstract render():void
 }
 class NewsFeedView extends View {
-  api:NewsFeedApi
-  feeds:NewsFeed[]
+  private api:NewsFeedApi
+  private feeds:NewsFeed[]
   constructor(containerId:string) {
     let template = `
     <div class="bg-gray-600 min-h-screen">
@@ -216,7 +216,7 @@ class NewsContentView extends View  {
     this.updateView()
   }
 
-  makeComment(comments:NewsComment[]):string {
+  private makeComment(comments:NewsComment[]):string {
     for (let i = 0; i < comments.length; i++) {
       const { user, content, time_ago, level } = comments[i]
       this.addHtml(`
@@ -245,6 +245,16 @@ class Router {
   routeTable:RouteInfo[]
   defaultRoute:RouteInfo|null
   constructor(){
+    // bind 함수는 함수 객체를 감싸는 함수이다.
+    // function1.bind(thisArg, thisArr)
+    // bindfunction(thisArg, thisArr){
+    //  function1(){
+    //   ... this <- thisArg
+    //  }
+    // }
+    // 위처럼 전달한 this값을 바인딩한 함수내부에서 사용가능하게 만들어준다.
+    // 만약 바인딩을 안하고 이벤트리스너안에서 fn(){this}를 사용하면
+    // this는 이벤트리스너 객체의 this를 가리키게 된다.
     window.addEventListener("hashchange", this.route.bind(this))
     this.routeTable = []
     this.defaultRoute = null
@@ -257,6 +267,7 @@ class Router {
     this.routeTable.push({ path, page })
   }
   route():void {
+    console.log(this)
     const routePath = location.hash
     if (routePath==='' && this.defaultRoute) {
       this.defaultRoute.page.render()
@@ -264,7 +275,6 @@ class Router {
     
     for (const RouteInfo of this.routeTable) {
       if (routePath.indexOf(RouteInfo.path) >= 0) {
-        console.log(RouteInfo.path)
         RouteInfo.page.render()
         break
       }
