@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>EventSystem</title>
+		<style>
+			body {
+				padding: 50px;
+			}
+			.box1 {
+				padding: 50px;
+				background: red;
+			}
+			.box2 {
+				padding: 50px;
+				background: blue;
+			}
+			.box3 {
+				padding: 50px;
+				background: yellow;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box1" data-name="red">
+			<div class="box2" data-name="blue">
+				<div class="box3" data-name="yellow"></div>
+			</div>
+		</div>
+	</body>
+	<script>
+		const main = () => {
+			const Bubbling_Phase = false;
+			const Capturing_Phase = true;
+			const Phase_Name = ['none', 'capturing', 'targeting', 'bubbling'];
+
+			function eventLogger({ target, currentTarget, eventPhase }) {
+				console.log(`${target.dataset.name}, ${currentTarget.dataset.name}, ${Phase_Name[eventPhase]} `);
+			}
+			let divs = document.querySelectorAll('div');
+			divs.forEach((div) => div.addEventListener('click', eventLogger, Bubbling_Phase));
+		};
+
+		document.addEventListener('DOMContentLoaded', main);
+	</script>
+</html>

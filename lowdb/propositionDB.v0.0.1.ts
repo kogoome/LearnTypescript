@@ -14,10 +14,7 @@
  * 분리시키는게 나을까
  * 분리시키는게 나아보인다. 포함시킨다면 두 개념에 한 관계를 모두 입력해야만 한다.
  */
-type Concept = {
-  name: string,
-  hash: number,
-}
+
 /** 
  * 관계의 목록을 만들고 만들 수 있는 논리를 기록한다.
 */
@@ -48,10 +45,6 @@ const tree:Concept = {
 const food:Concept = {
   name: "food",
   hash: 633,
-}
-
-type HashTable = {
-  [hash: Concept['hash']]: Concept,
 }
 
 const hashTable:HashTable = {

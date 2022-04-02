@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.26.1",
+    "lowdb": "^3.0.0",
     "parcel-bundler": "^1.12.5"
   }
 }
