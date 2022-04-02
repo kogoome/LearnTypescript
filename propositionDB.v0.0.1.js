@@ -71,8 +71,9 @@ function isSubset(subset, set) {
     var subsetPath = hashPath_subset.filter(function (path) {
         return path.indexOf(subset.hash) < path.indexOf(set.hash);
     });
-    var path = subsetPath[0].map(function (hash) { return hashTable[hash].name; });
-    console.log();
+    var path = subsetPath[0].map(function (hash) {
+        return hashTable[hash].name;
+    });
     return subsetPath ?
         subset.name + " is " + set.name + ". and path : " + path.join(" -> ") :
         subset.name + " is not " + set.name;
