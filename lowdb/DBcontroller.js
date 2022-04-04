@@ -10,10 +10,14 @@ const db = new Low(adapter)
 
 // Read data from JSON file, this will set db.data content
 await db.read()
-const Data = db.data
+const {ConceptTable, Path} = db.data
 
-console.log(Data);
-
-
-
+function isSubset(subset, set) {
+  if (subset in ConceptTable && set in ConceptTable) {
+    Path.subset.forEach
+  } else {
+    console.log(false)
+  }
+}
+isSubset("fruit", "food")
 // await db.write()
