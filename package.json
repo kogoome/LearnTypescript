@@ -1,21 +1,21 @@
 {
-  "name": "fc_typescript_new",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^4.6.3"
-  },
-  "dependencies": {
-    "axios": "^0.26.1",
-    "bcrypt": "^5.0.1",
-    "lowdb": "^3.0.0",
-    "parcel-bundler": "^1.12.5"
-  }
+	"name": "fc_typescript_new",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"typescript": "^4.6.4"
+	},
+	"dependencies": {
+		"axios": "^0.27.2",
+		"bcrypt": "^5.0.1",
+		"lowdb": "^3.0.0",
+		"parcel-bundler": "^1.12.5"
+	}
 }
