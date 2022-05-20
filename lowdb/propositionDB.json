@@ -1,21 +1,38 @@
 {
-  "hashTable": {
-    "619": {
-      "name": "tree"
+  "ConceptTable": {
+    "food": {
+      "description": "food",
+      "relation": [
+        "subset"
+      ]
+    },
+    "fruit": {
+      "description": "fruit",
+      "relation": [
+        "subset"
+      ]
+    },
+    "apple": {
+      "description": "apple",
+      "relation": [
+        "subset"
+      ]
     }
   },
-  "hashPath": {
+  "Path": {
     "subset": [
       [
-        1063,
-        1127,
-        633
+        "food",
+        "fruit",
+        "apple"
       ]
     ],
     "include": [
       [
-        619,
-        1127
+      ]
+    ],
+    "relation": [
+      [
       ]
     ]
   }
